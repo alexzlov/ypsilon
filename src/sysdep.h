@@ -104,7 +104,6 @@ extern void fatal(const char* fmt, ...) ATTRIBUTE(noreturn);
     #include    <ws2tcpip.h>
     #include    <shlwapi.h>
 
-    extern "C" void __cdecl     _dosmaperr(unsigned long);
     #define snprintf            _snprintf
     #define srandom             srand
     #define random              rand

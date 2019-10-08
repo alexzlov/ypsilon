@@ -99,7 +99,6 @@ static void throw_io_error(int operation, const char* message)
                                    FILE_ATTRIBUTE_NORMAL,
                                    NULL);
             if (fd == INVALID_HANDLE_VALUE) {
-                _dosmaperr(GetLastError());
                 return INVALID_FD;
             }
             return fd;
@@ -111,7 +110,6 @@ static void throw_io_error(int operation, const char* message)
     static int io_close(fd_t fd)
     {
         if (CloseHandle(fd)) return 0;
-        _dosmaperr(GetLastError());
         return -1;
     }
 
@@ -127,7 +125,6 @@ static void throw_io_error(int operation, const char* message)
             if (err == ERROR_HANDLE_EOF) return 0;
             if (err == ERROR_BROKEN_PIPE) return 0;
             if (err == ERROR_ACCESS_DENIED) errno = EBADF;
-            else _dosmaperr(err);
             return -1;
         }
         return count;
@@ -143,7 +140,6 @@ static void throw_io_error(int operation, const char* message)
         if (WriteFile(fd, buf, nbytes, &count, &ov) == 0) {
             DWORD err = GetLastError();
             if (err == ERROR_ACCESS_DENIED) errno = EBADF;
-            else _dosmaperr(err);
             return -1;
         }
         if (count == 0) {
@@ -161,7 +157,6 @@ static void throw_io_error(int operation, const char* message)
             if (err == ERROR_HANDLE_EOF) return 0;
             if (err == ERROR_BROKEN_PIPE) return 0;
             if (err == ERROR_ACCESS_DENIED) errno = EBADF;
-            else _dosmaperr(err);
             return -1;
         }
         return count;
@@ -174,7 +169,6 @@ static void throw_io_error(int operation, const char* message)
         if (WriteFile(fd, buf, nbytes, &count, NULL) == 0) {
             DWORD err = GetLastError();
             if (err == ERROR_ACCESS_DENIED) errno = EBADF;
-            else _dosmaperr(err);
             return -1;
         }
         if (count == 0) {
@@ -198,7 +192,6 @@ static void throw_io_error(int operation, const char* message)
             fatal("%s:%u wrong origin", __FILE__, __LINE__);
         }
         if (SetFilePointerEx(fd, in, &out, method)) return out.QuadPart;
-        _dosmaperr(GetLastError());
         return -1;
     }
 
@@ -208,13 +201,11 @@ static void throw_io_error(int operation, const char* message)
         int retval;
         retval = GetTempPathA(sizeof(pathBuf), pathBuf);
         if (retval == 0) {
-            _dosmaperr(GetLastError());
             return INVALID_FD;
         }
         char nameBuf[MAX_PATH + 64];
         retval = GetTempFileNameA(pathBuf, "tmp", 0, nameBuf);
         if (retval == 0) {
-            _dosmaperr(GetLastError());
             return INVALID_FD;
         }
         HANDLE fd = CreateFileA(nameBuf,
@@ -225,7 +216,6 @@ static void throw_io_error(int operation, const char* message)
                             FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
                             NULL);
         if (fd == INVALID_HANDLE_VALUE) {
-            _dosmaperr(GetLastError());
             return INVALID_FD;
         }
         return fd;
@@ -265,7 +255,6 @@ static void throw_io_error(int operation, const char* message)
             *size = fileSize.QuadPart;
             return 0;
         }
-        _dosmaperr(GetLastError());
         return -1;
     }
 

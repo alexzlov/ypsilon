@@ -274,7 +274,6 @@ subr_standard_input_port(VM* vm, int argc, scm_obj_t argv[])
 #if _MSC_VER
             HANDLE hdl;
             if (!DuplicateHandle(GetCurrentProcess(), PORT_STDIN_FD, GetCurrentProcess(), &hdl, 0L, FALSE, DUPLICATE_SAME_ACCESS)) {
-                _dosmaperr(GetLastError());
                 raise_io_error(vm, "standard-input-port", SCM_PORT_OPERATION_OPEN, strerror(errno), errno, scm_false, scm_false);
                 return scm_undef;
             }
@@ -319,7 +318,6 @@ subr_standard_output_port(VM* vm, int argc, scm_obj_t argv[])
 #if _MSC_VER
             HANDLE hdl;
             if (!DuplicateHandle(GetCurrentProcess(), PORT_STDOUT_FD, GetCurrentProcess(), &hdl, 0L, FALSE, DUPLICATE_SAME_ACCESS)) {
-                _dosmaperr(GetLastError());
                 raise_io_error(vm, "standard-output-port", SCM_PORT_OPERATION_OPEN, strerror(errno), errno, scm_false, scm_false);
                 return scm_undef;
             }
@@ -364,7 +362,6 @@ subr_standard_error_port(VM* vm, int argc, scm_obj_t argv[])
 #if _MSC_VER
             HANDLE hdl;
             if (!DuplicateHandle(GetCurrentProcess(), PORT_STDERR_FD, GetCurrentProcess(), &hdl, 0L, FALSE, DUPLICATE_SAME_ACCESS)) {
-                _dosmaperr(GetLastError());
                 raise_io_error(vm, "standard-error-port", SCM_PORT_OPERATION_OPEN, strerror(errno), errno, scm_false, scm_false);
                 return scm_undef;
             }

@@ -117,7 +117,6 @@
                 }
                 CloseHandle(fd);
             }
-            _dosmaperr(GetLastError());
             raise_io_error(vm, "file-stat-atime", SCM_PORT_OPERATION_OPEN, win32_lasterror_message(), errno, scm_false, path);
             return scm_undef;
         }
@@ -139,7 +138,6 @@
                 }
                 CloseHandle(fd);
             }
-            _dosmaperr(GetLastError());
             raise_io_error(vm, "file-stat-mtime", SCM_PORT_OPERATION_OPEN, win32_lasterror_message(), errno, scm_false, path);
             return scm_undef;
         }
@@ -161,7 +159,6 @@
                 }
                 CloseHandle(fd);
             }
-            _dosmaperr(GetLastError());
             raise_io_error(vm, "file-stat-ctime", SCM_PORT_OPERATION_OPEN, win32_lasterror_message(), errno, scm_false, path);
             return scm_undef;
         }
@@ -182,7 +179,6 @@
                 }
                 CloseHandle(fd);
             }
-            _dosmaperr(GetLastError());
             raise_io_error(vm, "file-size-in-bytes", SCM_PORT_OPERATION_OPEN, win32_lasterror_message(), errno, scm_false, path);
             return scm_undef;
         }
@@ -279,7 +275,6 @@
         wchar_t ucs2[MAX_PATH];
         if (win32path(path, ucs2, array_sizeof(ucs2))) {
             if (DeleteFile(ucs2)) return scm_unspecified;
-            _dosmaperr(GetLastError());
             raise_io_error(vm, "delete-file", SCM_PORT_OPERATION_OPEN, win32_lasterror_message(), errno, scm_false, path);
             return scm_undef;
         }
@@ -292,7 +287,6 @@
         wchar_t ucs2[MAX_PATH];
         if (win32path(path, ucs2, array_sizeof(ucs2))) {
             if (ucs2_file_exists(ucs2)) return scm_unspecified;
-            _dosmaperr(GetLastError());
             raise_io_error(vm, "change-file-mode", SCM_PORT_OPERATION_OPEN, win32_lasterror_message(), errno, scm_false, path);
             return scm_undef;
         }
@@ -307,7 +301,6 @@
             wchar_t new_ucs2[MAX_PATH];
             if (win32path(new_path, new_ucs2, array_sizeof(new_ucs2))) {
                 if (MoveFileEx(old_ucs2, new_ucs2, MOVEFILE_REPLACE_EXISTING)) return scm_unspecified;
-                _dosmaperr(GetLastError());
                 raise_io_filesystem_error(vm, "rename-file", win32_lasterror_message(), errno, old_path, new_path);
                 return scm_undef;
             }
@@ -330,7 +323,6 @@
                 if (win32path(new_path, new_ucs2, array_sizeof(new_ucs2))) {
                     DWORD flag = PathIsDirectoryW(new_ucs2) ? 1 : 0; // SYMBOLIC_LINK_FLAG_DIRECTORY == 1
                     if (win32CreateSymbolicLink(new_ucs2, old_ucs2, flag)) return scm_unspecified;
-                    _dosmaperr(GetLastError());
                     raise_io_filesystem_error(vm, "create-symbolic-link", last_shared_object_error(), errno, old_path, new_path);
                     return scm_undef;
                 }
@@ -355,7 +347,6 @@
                 wchar_t new_ucs2[MAX_PATH];
                 if (win32path(new_path, new_ucs2, array_sizeof(new_ucs2))) {
                     if (win32CreateHardLink(new_ucs2, old_ucs2, NULL)) return scm_unspecified;
-                    _dosmaperr(GetLastError());
                     raise_io_filesystem_error(vm, "create-hard-link", win32_lasterror_message(), errno, old_path, new_path);
                     return scm_undef;
                 }
@@ -374,7 +365,6 @@
         wchar_t ucs2[MAX_PATH];
         char utf8[MAX_PATH];
         if (!GetCurrentDirectoryW(MAX_PATH, ucs2) || !posixpath(ucs2, utf8, sizeof(utf8))) {
-            _dosmaperr(GetLastError());
             raise_io_error(vm, "current-directory", SCM_PORT_OPERATION_OPEN, win32_lasterror_message(), errno, scm_false, scm_false);
             return scm_undef;
         }
@@ -386,7 +376,6 @@
         wchar_t ucs2[MAX_PATH];
         if (win32path(path, ucs2, array_sizeof(ucs2))) {
             if (!CreateDirectoryW(ucs2, NULL)) {
-                _dosmaperr(GetLastError());
                 raise_io_error(vm, "create-directory", SCM_PORT_OPERATION_OPEN, win32_lasterror_message(), errno, scm_false, path);
                 return scm_undef;
             }
@@ -401,7 +390,6 @@
         wchar_t ucs2[MAX_PATH];
         if (win32path(path, ucs2, array_sizeof(ucs2))) {
             if (!SetCurrentDirectoryW(ucs2)) {
-                _dosmaperr(GetLastError());
                 raise_io_error(vm, "current-directory", SCM_PORT_OPERATION_OPEN, win32_lasterror_message(), errno, scm_false, path);
                 return scm_undef;
             }
@@ -429,7 +417,6 @@
                 }
             }
         }
-        _dosmaperr(GetLastError());
         raise_io_error(vm, "directory-list", SCM_PORT_OPERATION_OPEN, win32_lasterror_message(), errno, scm_false, path);
         return scm_undef;
     }

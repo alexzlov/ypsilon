@@ -256,7 +256,6 @@
         return scm_undef;
 
         pipe_fail: create_fail: dup_fail: close_fail: {
-            _dosmaperr(GetLastError());
             char message[256];
             snprintf(message, sizeof(message), "%s() failed. %s", sysfunc, strerror(errno));
             if (fd0 != INVALID_HANDLE_VALUE) CloseHandle(fd0);
@@ -615,7 +614,6 @@ subr_process_wait(VM* vm, int argc, scm_obj_t argv[])
 
 exit_fail:
 wait_fail:
-    _dosmaperr(GetLastError());
     char message[256];
     snprintf(message, sizeof(message), "%s() failed. %s", sysfunc, strerror(errno));
     raise_error(vm, "process-wait", message, errno, argc, argv);
